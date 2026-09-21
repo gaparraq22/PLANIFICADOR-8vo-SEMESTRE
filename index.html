@@ -258,7 +258,6 @@
                             </div>
                             <select id="gantt-filter-subject" onchange="app.renderGantt()" class="text-sm border-slate-300 rounded-md shadow-sm bg-slate-50 py-1.5 px-3"></select>
                             
-                            <!-- NUEVO FILTRO DE ESTADO -->
                             <select id="gantt-filter-status" onchange="app.renderGantt()" class="text-sm border-slate-300 rounded-md shadow-sm bg-slate-50 py-1.5 px-3 text-slate-700">
                                 <option value="all">Estado: Todos</option>
                                 <option value="progress">En Progreso</option>
@@ -281,44 +280,72 @@
             <!-- VISTA: CRUD & CONFIG -->
             <div id="view-crud" class="view-section hidden">
                 <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                    <!-- Formulario -->
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                        <h3 class="font-bold text-lg text-slate-800 mb-4 border-b border-slate-100 pb-3"><i class="fa-solid fa-square-plus text-ucab-500 mr-2"></i>Registrar Actividad</h3>
-                        <form id="form-task" onsubmit="app.handleTaskSubmit(event)" class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-bold text-slate-700">Título</label>
-                                <input type="text" id="task-title" required class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-ucab-500 focus:ring-ucab-200 p-2 border bg-slate-50">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-slate-700">Materia</label>
-                                <select id="task-subject" required class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-ucab-500 p-2 border bg-slate-50"></select>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
+                    <!-- Columna Izquierda: Formularios -->
+                    <div class="space-y-6">
+                        <!-- Formulario de Actividad -->
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                            <h3 class="font-bold text-lg text-slate-800 mb-4 border-b border-slate-100 pb-3"><i class="fa-solid fa-square-plus text-ucab-500 mr-2"></i>Registrar Actividad</h3>
+                            <form id="form-task" onsubmit="app.handleTaskSubmit(event)" class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-bold text-slate-700">Fecha Inicio</label>
-                                    <input type="date" id="task-start" required class="mt-1 block w-full rounded-lg border-slate-300 p-2 border bg-slate-50 text-sm">
+                                    <label class="block text-sm font-bold text-slate-700">Título</label>
+                                    <input type="text" id="task-title" required class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-ucab-500 focus:ring-ucab-200 p-2 border bg-slate-50">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-bold text-slate-700">Fecha Entrega</label>
-                                    <input type="date" id="task-end" required class="mt-1 block w-full rounded-lg border-slate-300 p-2 border bg-slate-50 text-sm">
+                                    <label class="block text-sm font-bold text-slate-700">Materia</label>
+                                    <select id="task-subject" required class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-ucab-500 p-2 border bg-slate-50"></select>
                                 </div>
-                            </div>
-                            
-                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mt-2">
-                                <label class="flex justify-between items-center text-sm font-bold text-slate-700 mb-2">
-                                    <span>Subtareas (Desglose)</span>
-                                    <button type="button" onclick="app.addSubtaskInput()" class="text-xs bg-white border border-slate-300 px-2 py-1 rounded shadow-sm hover:bg-slate-100"><i class="fa-solid fa-plus text-ucab-600"></i> Añadir</button>
-                                </label>
-                                <div id="subtasks-container" class="space-y-2"></div>
-                            </div>
-                            
-                            <button type="submit" id="task-submit-btn" class="w-full py-3 px-4 bg-ucab-600 hover:bg-ucab-700 text-white font-bold rounded-lg shadow-md transition-all active:scale-[0.98]">Guardar en Planificador</button>
-                            <button type="button" id="task-cancel-btn" onclick="app.cancelEdit()" class="hidden w-full mt-2 py-2 px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg shadow-sm transition-all">Cancelar Edición</button>
-                        </form>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-700">Fecha Inicio</label>
+                                        <input type="date" id="task-start" required class="mt-1 block w-full rounded-lg border-slate-300 p-2 border bg-slate-50 text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-700">Fecha Entrega</label>
+                                        <input type="date" id="task-end" required class="mt-1 block w-full rounded-lg border-slate-300 p-2 border bg-slate-50 text-sm">
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mt-2">
+                                    <label class="flex justify-between items-center text-sm font-bold text-slate-700 mb-2">
+                                        <span>Subtareas (Desglose)</span>
+                                        <button type="button" onclick="app.addSubtaskInput()" class="text-xs bg-white border border-slate-300 px-2 py-1 rounded shadow-sm hover:bg-slate-100"><i class="fa-solid fa-plus text-ucab-600"></i> Añadir</button>
+                                    </label>
+                                    <div id="subtasks-container" class="space-y-2"></div>
+                                </div>
+                                
+                                <button type="submit" id="task-submit-btn" class="w-full py-3 px-4 bg-ucab-600 hover:bg-ucab-700 text-white font-bold rounded-lg shadow-md transition-all active:scale-[0.98]">Guardar en Planificador</button>
+                                <button type="button" id="task-cancel-btn" onclick="app.cancelEdit()" class="hidden w-full mt-2 py-2 px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg shadow-sm transition-all">Cancelar Edición</button>
+                            </form>
+                        </div>
+
+                        <!-- NUEVO: Formulario de Materia -->
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                            <h3 class="font-bold text-lg text-slate-800 mb-4 border-b border-slate-100 pb-3"><i class="fa-solid fa-book text-blue-500 mr-2"></i>Registrar Nueva Materia</h3>
+                            <form id="form-subject" onsubmit="app.handleSubjectSubmit(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700">Nombre de la Materia / Proyecto</label>
+                                    <input type="text" id="subject-name" required class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 p-2 border bg-slate-50" placeholder="Ej. Prácticas Profesionales">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700">Color Identificador</label>
+                                    <select id="subject-color" required class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 p-2 border bg-slate-50">
+                                        <option value="blue">Azul</option>
+                                        <option value="red">Rojo</option>
+                                        <option value="green">Verde</option>
+                                        <option value="yellow">Amarillo</option>
+                                        <option value="purple">Morado</option>
+                                        <option value="orange">Naranja</option>
+                                        <option value="slate">Gris</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="w-full py-2 px-4 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg shadow-md transition-all">Añadir Materia</button>
+                            </form>
+                        </div>
                     </div>
 
-                    <!-- JSON & System -->
+                    <!-- Columna Derecha: JSON & System -->
                     <div class="space-y-6">
+                        <!-- Respaldo JSON -->
                         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                             <h3 class="font-bold text-lg text-slate-800 mb-3"><i class="fa-solid fa-database text-blue-500 mr-2"></i>Respaldo de Datos (JSON)</h3>
                             <p class="text-xs text-slate-500 mb-3 leading-relaxed">Pega un esquema JSON válido para importar o haz clic en exportar para obtener una copia de seguridad actual. <strong>Las tareas nuevas se añadirán sin borrar las anteriores.</strong></p>
@@ -333,7 +360,6 @@
                         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="font-bold text-lg text-slate-800"><i class="fa-solid fa-list-check text-ucab-500 mr-2"></i>Registradas</h3>
-                                <!-- Búsqueda CRUD -->
                                 <div class="flex-1 max-w-[200px] flex items-center bg-slate-50 border border-slate-300 rounded-md px-2 shadow-sm focus-within:border-ucab-500 transition-all">
                                     <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs"></i>
                                     <input type="text" id="crud-search" onkeyup="app.renderTaskList()" placeholder="Buscar..." class="w-full text-sm bg-transparent border-none py-1.5 focus:ring-0 search-clean pl-2">
@@ -526,7 +552,6 @@
                 try {
                     const parsed = JSON.parse(document.getElementById('json-io').value);
                     if (parsed.subjects && parsed.tasks) {
-                        // Lógica para Combinar (Append)
                         parsed.subjects.forEach(newSubj => {
                             const idx = this.data.subjects.findIndex(s => s.id === newSubj.id);
                             if (idx >= 0) this.data.subjects[idx] = newSubj;
@@ -541,7 +566,7 @@
                         
                         this.saveData();
                         this.showToast("Datos combinados y cargados correctamente.");
-                        document.getElementById('json-io').value = ""; // Limpiar panel tras importar
+                        document.getElementById('json-io').value = ""; 
                     } else throw new Error("Estructura inválida");
                 } catch(e) { this.showToast("Error JSON: " + e.message, true); }
             }
@@ -594,10 +619,30 @@
             }
 
             populateDropdowns() {
+                // Capturar valores actuales para no perder el filtro al actualizar la barra
+                const currentDashFilter = document.getElementById('dash-filter-subject')?.value;
+                const currentGanttFilter = document.getElementById('gantt-filter-subject')?.value;
+                const currentTaskFilter = document.getElementById('task-subject')?.value;
+
                 const html = this.data.subjects.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-                document.getElementById('dash-filter-subject').innerHTML = `<option value="all">Todas las materias</option>` + html;
-                document.getElementById('gantt-filter-subject').innerHTML = `<option value="all">Gantt Consolidado</option>` + html;
-                document.getElementById('task-subject').innerHTML = html;
+                
+                const elDash = document.getElementById('dash-filter-subject');
+                if (elDash) {
+                    elDash.innerHTML = `<option value="all">Todas las materias</option>` + html;
+                    if (currentDashFilter) elDash.value = currentDashFilter;
+                }
+                
+                const elGantt = document.getElementById('gantt-filter-subject');
+                if (elGantt) {
+                    elGantt.innerHTML = `<option value="all">Gantt Consolidado</option>` + html;
+                    if (currentGanttFilter) elGantt.value = currentGanttFilter;
+                }
+
+                const elTask = document.getElementById('task-subject');
+                if (elTask) {
+                    elTask.innerHTML = html;
+                    if (currentTaskFilter) elTask.value = currentTaskFilter;
+                }
             }
 
             switchView(viewName) {
@@ -667,7 +712,7 @@
 
                 const list = document.getElementById('dash-tasks-list');
                 if (tRender.length === 0) {
-                    list.innerHTML = `<div class="py-10 text-center text-slate-400 italic">Todo al día en esta vista.</div>`;
+                    list.innerHTML = `<div class="py-10 text-center text-slate-400 italic">No hay entregas pendientes con estos filtros.</div>`;
                 } else {
                     list.innerHTML = tRender.map(t => {
                         const subj = this.getSubject(t.subjectId);
@@ -767,7 +812,7 @@
                         dayTasks = dayTasks.filter(t => t.title.toLowerCase().includes(searchTxt) || this.getSubject(t.subjectId).name.toLowerCase().includes(searchTxt));
                     }
                     
-                    let maxUrg = -1; // -1: none, 0: done, 1: safe, 2: attention, 3: critical, 4: overdue
+                    let maxUrg = -1; 
                     const urgMap = { 'completed': 0, 'safe': 1, 'attention': 2, 'critical': 3, 'overdue': 4 };
                     
                     let htmlTasks = dayTasks.map(t => {
@@ -829,18 +874,20 @@
 
             renderGantt() {
                 const container = document.getElementById('gantt-container');
+                // Guardar la posición del scroll antes de redibujar (crucial al usar sliders)
+                const scrollEl = document.getElementById('gantt-scroll');
+                const currentScrollPos = scrollEl ? scrollEl.scrollLeft : null;
+                
                 const filter = document.getElementById('gantt-filter-subject').value;
                 const statusFilter = document.getElementById('gantt-filter-status').value;
                 const searchTxt = (document.getElementById('gantt-search')?.value || '').toLowerCase();
                 
                 let tasks = this.data.tasks;
                 
-                // Filtro Materia
+                // Filtros Gantt
                 if (filter !== 'all') tasks = tasks.filter(t => t.subjectId === filter);
-                // Filtro Estado
                 if (statusFilter === 'progress') tasks = tasks.filter(t => this.getTaskProgress(t) < 100);
                 if (statusFilter === 'completed') tasks = tasks.filter(t => this.getTaskProgress(t) === 100);
-                // Buscador
                 if (searchTxt) {
                     tasks = tasks.filter(t => t.title.toLowerCase().includes(searchTxt) || this.getSubject(t.subjectId).name.toLowerCase().includes(searchTxt));
                 }
@@ -904,7 +951,7 @@
                 });
 
                 if(tasks.length === 0){
-                    container.innerHTML = `<div class="p-10 text-center text-slate-500 italic flex-1 border border-slate-200 rounded-lg">No se encontraron tareas con estos filtros.</div>`;
+                    container.innerHTML = `<div class="p-10 text-center text-slate-500 italic flex-1 flex items-center justify-center border border-slate-200 rounded-lg">No se encontraron tareas con estos filtros.</div>`;
                     return;
                 }
 
@@ -918,21 +965,42 @@
                     </div>
                 `;
 
+                // Restaurar el scroll donde lo dejó el usuario (o auto-scroll a hoy si es la primera carga)
                 setTimeout(() => {
-                    const scrl = document.getElementById('gantt-scroll');
-                    if (scrl) {
-                        const dStr = new Date().toISOString().split('T')[0];
-                        const perc = this.getDatePos(dStr);
-                        scrl.scrollLeft = (scrl.scrollWidth * (perc / 100)) - 100;
+                    const newScrollEl = document.getElementById('gantt-scroll');
+                    if (newScrollEl) {
+                        if (currentScrollPos !== null && currentScrollPos !== 0) {
+                            newScrollEl.scrollLeft = currentScrollPos;
+                        } else {
+                            const dStr = new Date().toISOString().split('T')[0];
+                            const perc = this.getDatePos(dStr);
+                            newScrollEl.scrollLeft = (newScrollEl.scrollWidth * (perc / 100)) - 100;
+                        }
                     }
-                }, 100);
+                }, 50);
             }
 
-            // --- Operaciones CRUD de Tareas ---
+            // --- Operaciones CRUD de Tareas y Materias ---
+            handleSubjectSubmit(e) {
+                e.preventDefault();
+                const name = document.getElementById('subject-name').value.trim();
+                const color = document.getElementById('subject-color').value;
+
+                this.data.subjects.push({
+                    id: 'sub_' + Date.now(),
+                    name: name,
+                    color: color
+                });
+
+                this.showToast("Nueva materia añadida correctamente.");
+                e.target.reset();
+                this.saveData();
+            }
+
             addSubtaskInput() {
                 const c = document.getElementById('subtasks-container');
                 const id = 'sti_' + Date.now();
-                // Uso de insertAdjacentHTML para NO borrar el texto ya ingresado
+                // Uso insertAdjacentHTML para evitar que se borre el texto ya ingresado en los inputs
                 const html = `
                     <div class="flex gap-2 items-center bg-white p-2 border border-slate-200 rounded mt-2" id="${id}">
                         <i class="fa-solid fa-level-up-alt fa-rotate-90 text-slate-300 ml-1"></i>
@@ -1075,7 +1143,6 @@
                 }
 
                 this.saveData();
-                this.renderTaskList();
             }
         }
 
