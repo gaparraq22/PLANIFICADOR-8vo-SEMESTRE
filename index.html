@@ -331,69 +331,38 @@
     </div>
 
     <script>
+<script>
         // --- CONSTANTES GLOBALES Y DATOS POR DEFECTO ---
-        const BASE_COLORS = {
+        const BASE_COLORS = { 
             blue: '#3b82f6', red: '#ef4444', green: '#22c55e', 
             yellow: '#eab308', purple: '#a855f7', orange: '#f97316', slate: '#64748b'
         };
-
-        const SEMESTER_WEEKS = [
-            { id: 'S1', start: '2026-09-14', end: '2026-09-20' },
-            { id: 'S2', start: '2026-09-21', end: '2026-09-27' },
-            { id: 'S3', start: '2026-09-28', end: '2026-10-04' },
-            { id: 'S4', start: '2026-10-05', end: '2026-10-11' },
-            { id: 'S5', start: '2026-10-12', end: '2026-10-18' },
-            { id: 'S6', start: '2026-10-19', end: '2026-10-25' },
-            { id: 'S7', start: '2026-10-26', end: '2026-11-01' },
-            { id: 'S8', start: '2026-11-02', end: '2026-11-08' },
-            { id: 'S9', start: '2026-11-09', end: '2026-11-15' },
-            { id: 'S10', start: '2026-11-16', end: '2026-11-22' },
-            { id: 'S11', start: '2026-11-23', end: '2026-11-29' },
-            { id: 'S12', start: '2026-11-30', end: '2026-12-06' },
-            { id: 'S13', start: '2026-12-07', end: '2026-12-13' },
-            { id: 'S14', start: '2026-12-14', end: '2026-12-18' },
-            { id: 'S15', start: '2027-01-07', end: '2027-01-10' },
-            { id: 'S16', start: '2027-01-11', end: '2027-01-15' }
+        const SEMESTER_WEEKS = [ 
+            { id: 'S1', start: '2026-09-14', end: '2026-09-20' }, { id: 'S2', start: '2026-09-21', end: '2026-09-27' },
+            { id: 'S3', start: '2026-09-28', end: '2026-10-04' }, { id: 'S4', start: '2026-10-05', end: '2026-10-11' },
+            { id: 'S5', start: '2026-10-12', end: '2026-10-18' }, { id: 'S6', start: '2026-10-19', end: '2026-10-25' },
+            { id: 'S7', start: '2026-10-26', end: '2026-11-01' }, { id: 'S8', start: '2026-11-02', end: '2026-11-08' },
+            { id: 'S9', start: '2026-11-09', end: '2026-11-15' }, { id: 'S10', start: '2026-11-16', end: '2026-11-22' },
+            { id: 'S11', start: '2026-11-23', end: '2026-11-29' }, { id: 'S12', start: '2026-11-30', end: '2026-12-06' },
+            { id: 'S13', start: '2026-12-07', end: '2026-12-13' }, { id: 'S14', start: '2026-12-14', end: '2026-12-18' },
+            { id: 'S15', start: '2027-01-07', end: '2027-01-10' }, { id: 'S16', start: '2027-01-11', end: '2027-01-15' }
         ];
-
-        const INITIAL_SUBJECTS = [
-            { id: 'sub1', name: 'Cadenas de Suministros', color: 'blue' },
-            { id: 'sub2', name: 'Proyecto de Grado', color: 'purple' },
-            { id: 'sub3', name: 'Calidad y Mejora Continua', color: 'green' },
-            { id: 'sub4', name: 'Ética Profesional', color: 'slate' },
-            { id: 'sub5', name: 'Movilidad Eléctrica', color: 'yellow' },
-            { id: 'sub6', name: 'Planificación Estratégica', color: 'orange' },
+        const INITIAL_SUBJECTS = [ 
+            { id: 'sub1', name: 'Cadenas de Suministros', color: 'blue' }, { id: 'sub2', name: 'Proyecto de Grado', color: 'purple' },
+            { id: 'sub3', name: 'Calidad y Mejora Continua', color: 'green' }, { id: 'sub4', name: 'Ética Profesional', color: 'slate' },
+            { id: 'sub5', name: 'Movilidad Eléctrica', color: 'yellow' }, { id: 'sub6', name: 'Planificación Estratégica', color: 'orange' },
             { id: 'sub7', name: 'Pasantía SST (Mini Bruno)', color: 'red' }
         ];
-
-        const INITIAL_TASKS = [
-            {
-                id: 't_1', title: 'Definición del Problema (Capítulo 1)', subjectId: 'sub2',
-                startDate: '2026-09-15', dueDate: '2026-10-05', progress: 0,
-                subtasks: [ { id: 'st_1', title: 'Recopilar datos Planta 2', progress: 0 }, { id: 'st_2', title: 'Redactar justificación', progress: 0 } ]
-            }
+        const INITIAL_TASKS = [ 
+            { id: 't_1', title: 'Definición del Problema (Capítulo 1)', subjectId: 'sub2', startDate: '2026-09-15', dueDate: '2026-10-05', progress: 0, subtasks: [ { id: 'st_1', title: 'Recopilar datos Planta 2', progress: 0 }, { id: 'st_2', title: 'Redactar justificación', progress: 0 } ] }
         ];
 
-        // 1. Inicializa el cliente (Pega tus credenciales aquí, si las dejas vacías usará modo local)
-        const supabaseUrl = 'https://ijhnedoovaletxstjafk.supabase.co'; // <-- TU URL AQUÍ
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlqaG5lZG9vdmFsZXR4c3RqYWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5OTAyOTAsImV4cCI6MjEwNTU2NjI5MH0.RobGP9hIxm2UTU8X1-9M2eGhlD_hK44uYmOM2KNLV2w'; // <-- TU ANON KEY AQUÍ
+        // Definimos la variable global vacía primero
         let supabaseClient = null;
-
-        try {
-            if (supabaseUrl && supabaseKey) {
-                // Se usa otro nombre de variable para no chocar con la librería global (resuelve SyntaxError)
-                supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-            }
-        } catch (e) {
-            console.warn("Aviso: No se configuró Supabase. La app usará almacenamiento local.", e);
-        }
 
         class UCABApp {
             constructor() {
-                this.data = {
-                    subjects: [],
-                    tasks: []
-                };
+                this.data = { subjects: [], tasks: [] };
                 this.currentView = 'dashboard';
                 this.currentMonth = new Date().getMonth();
                 this.currentYear = new Date().getFullYear();
@@ -403,13 +372,29 @@
             }
 
             async initSupabase() {
-                if (supabaseClient) this.showToast('Conectando a la nube...', 'info');
-                await this.loadData();
+                try {
+                    // Esperamos e inicializamos JUSTO ANTES de usarla
+                    const supabaseUrl = 'https://ijhnedoovaletxstjafk.supabase.co'; 
+                    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlqaG5lZG9vdmFsZXR4c3RqYWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5OTAyOTAsImV4cCI6MjEwNTU2NjI5MH0.RobGP9hIxm2UTU8X1-9M2eGhlD_hK44uYmOM2KNLV2w'; 
+                    
+                    if (window.supabase) {
+                        supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+                        this.showToast('Conectando a la base de datos...', 'info');
+                        await this.loadData();
+                    } else {
+                        throw new Error("La librería Supabase no cargó.");
+                    }
+                } catch(e) {
+                    console.warn(e);
+                    this.showToast('Usando almacenamiento local.', 'info');
+                    const local = localStorage.getItem('ucab_data');
+                    if (local) this.data = JSON.parse(local);
+                    else this.loadDefaultData();
+                }
+                
                 this.render();
                 this.setupEventListeners();
-                if (supabaseClient) this.showToast('Sincronizado con éxito', 'success');
             }
-
             async loadData() {
                 try {
                     if (!supabaseClient) throw new Error("Cliente no configurado");
