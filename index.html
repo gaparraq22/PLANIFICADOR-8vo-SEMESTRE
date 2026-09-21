@@ -12,8 +12,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
         tailwind.config = {
@@ -299,7 +297,7 @@
                     <div class="space-y-6">
                         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                             <h3 class="font-bold text-lg text-slate-800 mb-3"><i class="fa-solid fa-database text-blue-500 mr-2"></i>Respaldo de Datos (JSON)</h3>
-                            <p class="text-xs text-slate-500 mb-3 leading-relaxed">Pega un esquema JSON válido para importar o haz clic en exportar para obtener una copia de seguridad actual. La persistencia es automática vía Supabase.</p>
+                            <p class="text-xs text-slate-500 mb-3 leading-relaxed">Pega un esquema JSON válido para importar o haz clic en exportar para obtener una copia de seguridad actual. La persistencia es automática vía LocalStorage.</p>
                             <textarea id="json-io" rows="4" class="w-full text-xs font-mono p-3 bg-slate-800 text-green-400 border border-slate-700 rounded-lg focus:ring-blue-500 focus:border-blue-500 hide-scrollbar" spellcheck="false"></textarea>
                             <div class="flex gap-3 mt-4">
                                 <button onclick="app.exportData()" class="flex-1 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 py-2 rounded-lg font-bold text-sm transition-colors"><i class="fa-solid fa-download mr-1"></i> Generar JSON</button>
@@ -307,7 +305,7 @@
                             </div>
                         </div>
 
-                        <!-- Lista de Tareas (CRUD Completo) -->
+                        <!-- NUEVA ZONA: Lista de Tareas (CRUD Completo) -->
                         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                             <h3 class="font-bold text-lg text-slate-800 mb-3"><i class="fa-solid fa-list-check text-ucab-500 mr-2"></i>Tareas Registradas</h3>
                             <div class="overflow-y-auto max-h-[220px] border border-slate-200 rounded-lg hide-scrollbar" id="crud-task-list">
@@ -334,38 +332,68 @@
 
     <script>
         // --- CONSTANTES GLOBALES Y DATOS POR DEFECTO ---
-        const BASE_COLORS = { /* ... (tus colores se mantienen igual) ... */ 
+        const BASE_COLORS = {
             blue: '#3b82f6', red: '#ef4444', green: '#22c55e', 
             yellow: '#eab308', purple: '#a855f7', orange: '#f97316', slate: '#64748b'
         };
-        const SEMESTER_WEEKS = [ /* ... (tus semanas igual) ... */ 
-            { id: 'S1', start: '2026-09-14', end: '2026-09-20' }, { id: 'S2', start: '2026-09-21', end: '2026-09-27' },
-            { id: 'S3', start: '2026-09-28', end: '2026-10-04' }, { id: 'S4', start: '2026-10-05', end: '2026-10-11' },
-            { id: 'S5', start: '2026-10-12', end: '2026-10-18' }, { id: 'S6', start: '2026-10-19', end: '2026-10-25' },
-            { id: 'S7', start: '2026-10-26', end: '2026-11-01' }, { id: 'S8', start: '2026-11-02', end: '2026-11-08' },
-            { id: 'S9', start: '2026-11-09', end: '2026-11-15' }, { id: 'S10', start: '2026-11-16', end: '2026-11-22' },
-            { id: 'S11', start: '2026-11-23', end: '2026-11-29' }, { id: 'S12', start: '2026-11-30', end: '2026-12-06' },
-            { id: 'S13', start: '2026-12-07', end: '2026-12-13' }, { id: 'S14', start: '2026-12-14', end: '2026-12-18' },
-            { id: 'S15', start: '2027-01-07', end: '2027-01-10' }, { id: 'S16', start: '2027-01-11', end: '2027-01-15' }
-        ];
-        const INITIAL_SUBJECTS = [ /* ... (tus materias) ... */ 
-            { id: 'sub1', name: 'Cadenas de Suministros', color: 'blue' }, { id: 'sub2', name: 'Proyecto de Grado', color: 'purple' },
-            { id: 'sub3', name: 'Calidad y Mejora Continua', color: 'green' }, { id: 'sub4', name: 'Ética Profesional', color: 'slate' },
-            { id: 'sub5', name: 'Movilidad Eléctrica', color: 'yellow' }, { id: 'sub6', name: 'Planificación Estratégica', color: 'orange' },
-            { id: 'sub7', name: 'Pasantía SST (Mini Bruno)', color: 'red' }
-        ];
-        const INITIAL_TASKS = [ /* ... */ 
-            { id: 't_1', title: 'Definición del Problema (Capítulo 1)', subjectId: 'sub2', startDate: '2026-09-15', dueDate: '2026-10-05', progress: 0, subtasks: [ { id: 'st_1', title: 'Recopilar datos Planta 2', progress: 0 }, { id: 'st_2', title: 'Redactar justificación', progress: 0 } ] }
+
+        const SEMESTER_WEEKS = [
+            { id: 'S1', start: '2026-09-14', end: '2026-09-20' },
+            { id: 'S2', start: '2026-09-21', end: '2026-09-27' },
+            { id: 'S3', start: '2026-09-28', end: '2026-10-04' },
+            { id: 'S4', start: '2026-10-05', end: '2026-10-11' },
+            { id: 'S5', start: '2026-10-12', end: '2026-10-18' },
+            { id: 'S6', start: '2026-10-19', end: '2026-10-25' },
+            { id: 'S7', start: '2026-10-26', end: '2026-11-01' },
+            { id: 'S8', start: '2026-11-02', end: '2026-11-08' },
+            { id: 'S9', start: '2026-11-09', end: '2026-11-15' },
+            { id: 'S10', start: '2026-11-16', end: '2026-11-22' },
+            { id: 'S11', start: '2026-11-23', end: '2026-11-29' },
+            { id: 'S12', start: '2026-11-30', end: '2026-12-06' },
+            { id: 'S13', start: '2026-12-07', end: '2026-12-13' },
+            { id: 'S14', start: '2026-12-14', end: '2026-12-18' },
+            { id: 'S15', start: '2027-01-07', end: '2027-01-10' },
+            { id: 'S16', start: '2027-01-11', end: '2027-01-15' }
         ];
 
-        // 1. SOLUCIÓN AL NOMBRE DE VARIABLE: Le ponemos 'supabaseClient'
-        const supabaseUrl = 'https://ijhnedoovaletxstjafk.supabase.co'; 
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlqaG5lZG9vdmFsZXR4c3RqYWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5OTAyOTAsImV4cCI6MjEwNTU2NjI5MH0.RobGP9hIxm2UTU8X1-9M2eGhlD_hK44uYmOM2KNLV2w'; 
-        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+        const INITIAL_SUBJECTS = [
+            { id: 'sub1', name: 'Cadenas de Suministros', color: 'blue' },
+            { id: 'sub2', name: 'Proyecto de Grado', color: 'purple' },
+            { id: 'sub3', name: 'Calidad y Mejora Continua', color: 'green' },
+            { id: 'sub4', name: 'Ética Profesional', color: 'slate' },
+            { id: 'sub5', name: 'Movilidad Eléctrica', color: 'yellow' },
+            { id: 'sub6', name: 'Planificación Estratégica', color: 'orange' },
+            { id: 'sub7', name: 'Pasantía SST (Mini Bruno)', color: 'red' }
+        ];
+
+        const INITIAL_TASKS = [
+            {
+                id: 't_1', title: 'Definición del Problema (Capítulo 1)', subjectId: 'sub2',
+                startDate: '2026-09-15', dueDate: '2026-10-05', progress: 0,
+                subtasks: [ { id: 'st_1', title: 'Recopilar datos Planta 2', progress: 0 }, { id: 'st_2', title: 'Redactar justificación', progress: 0 } ]
+            }
+        ];
+
+        // 1. Inicializa el cliente (Pega tus credenciales aquí, si las dejas vacías usará modo local)
+        const supabaseUrl = 'https://ijhnedoovaletxstjafk.supabase.co'; // <-- TU URL AQUÍ
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlqaG5lZG9vdmFsZXR4c3RqYWZrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5OTAyOTAsImV4cCI6MjEwNTU2NjI5MH0.RobGP9hIxm2UTU8X1-9M2eGhlD_hK44uYmOM2KNLV2w'; // <-- TU ANON KEY AQUÍ
+        let supabaseClient = null;
+
+        try {
+            if (supabaseUrl && supabaseKey) {
+                // Se usa otro nombre de variable para no chocar con la librería global (resuelve SyntaxError)
+                supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+            }
+        } catch (e) {
+            console.warn("Aviso: No se configuró Supabase. La app usará almacenamiento local.", e);
+        }
 
         class UCABApp {
             constructor() {
-                this.data = { subjects: [], tasks: [] };
+                this.data = {
+                    subjects: [],
+                    tasks: []
+                };
                 this.currentView = 'dashboard';
                 this.currentMonth = new Date().getMonth();
                 this.currentYear = new Date().getFullYear();
@@ -375,16 +403,17 @@
             }
 
             async initSupabase() {
-                this.showToast('Conectando a la base de datos...', 'info');
+                if (supabaseClient) this.showToast('Conectando a la nube...', 'info');
                 await this.loadData();
                 this.render();
                 this.setupEventListeners();
-                this.showToast('Sincronizado con éxito', 'success');
+                if (supabaseClient) this.showToast('Sincronizado con éxito', 'success');
             }
 
             async loadData() {
                 try {
-                    // Usamos supabaseClient aquí
+                    if (!supabaseClient) throw new Error("Cliente no configurado");
+                    
                     const { data, error } = await supabaseClient
                         .from('planner_state')
                         .select('payload')
@@ -399,38 +428,44 @@
                         this.loadDefaultData();
                     }
                 } catch (error) {
-                    console.error('Error cargando de Supabase:', error);
-                    this.showToast('Error de conexión. Cargando datos locales.', 'error');
+                    console.warn('Usando modo local (Fallback):', error.message);
                     const local = localStorage.getItem('ucab_data');
-                    if (local) this.data = JSON.parse(local);
-                    else this.loadDefaultData();
+                    if (local) {
+                        this.data = JSON.parse(local);
+                    } else {
+                        this.loadDefaultData();
+                    }
                 }
             }
 
             loadDefaultData() {
-                this.data = { subjects: JSON.parse(JSON.stringify(INITIAL_SUBJECTS)), tasks: JSON.parse(JSON.stringify(INITIAL_TASKS)) };
+                this.data = {
+                    subjects: JSON.parse(JSON.stringify(INITIAL_SUBJECTS)),
+                    tasks: JSON.parse(JSON.stringify(INITIAL_TASKS))
+                };
                 this.saveData();
             }
 
             async saveData() {
                 try {
-                    // Usamos supabaseClient aquí
-                    const { error } = await supabaseClient
-                        .from('planner_state')
-                        .update({ payload: this.data })
-                        .eq('id', 1);
-
-                    if (error) throw error;
+                    if (supabaseClient) {
+                        const { error } = await supabaseClient
+                            .from('planner_state')
+                            .update({ payload: this.data })
+                            .eq('id', 1);
+                        if (error) throw error;
+                    }
                     
                     localStorage.setItem('ucab_data', JSON.stringify(this.data));
                     this.render(); 
                 } catch (error) {
                     console.error('Error guardando en Supabase:', error);
-                    this.showToast('Error sincronizando cambios', 'error');
+                    this.showToast('Error de nube. Guardado localmente.', true);
+                    localStorage.setItem('ucab_data', JSON.stringify(this.data));
+                    this.render();
                 }
             }
             
-            // ... (Pega el resto de los métodos de la clase UCABApp que tenías justo aquí debajo: render, setupEventListeners, factoryReset, etc.) ...    
             render() {
                 this.setupDates();
                 this.populateDropdowns();
@@ -438,7 +473,6 @@
             }
 
             setupEventListeners() {
-                // Resize watcher para los gráficos
                 window.addEventListener('resize', () => {
                     if (this.currentView === 'dashboard') this.renderCharts();
                 });
@@ -467,7 +501,6 @@
                 } catch(e) { this.showToast("Error JSON: " + e.message, true); }
             }
 
-            // --- Core Progress Calculation Logic ---
             getSubject(id) { return this.data.subjects.find(s => s.id === id) || this.data.subjects[0]; }
             
             getTaskProgress(task) {
@@ -495,7 +528,6 @@
                 const prog = this.getTaskProgress(task);
                 if (prog === 100) return { status: 'completed', colorClass: 'bg-slate-100 border-slate-300 text-slate-500', icon: 'fa-check', text: 'Completada' };
                 
-                // Cálculo de días respecto al "Hoy"
                 const today = new Date(); today.setHours(0,0,0,0);
                 const [y, m, d] = task.dueDate.split('-');
                 const dueDate = new Date(y, m - 1, d); dueDate.setHours(0,0,0,0);
@@ -509,7 +541,6 @@
                 return { status: 'safe', colorClass: 'bg-green-50 border-green-500 text-green-700', icon: 'fa-leaf', text: `${days} días (Seguro)` };
             }
 
-            // --- UI CONTROLLERS ---
             setupDates() {
                 const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
                 document.getElementById('current-date-display').textContent = new Date().toLocaleDateString('es-VE', opts);
@@ -529,14 +560,17 @@
                     btn.classList.add('text-blue-200');
                 });
                 const activeBtn = document.getElementById(`nav-${viewName}`);
-                activeBtn.classList.remove('text-blue-200');
-                activeBtn.classList.add('bg-blue-800', 'text-white', 'shadow-inner');
+                if (activeBtn) {
+                    activeBtn.classList.remove('text-blue-200');
+                    activeBtn.classList.add('bg-blue-800', 'text-white', 'shadow-inner');
+                }
 
                 document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
-                document.getElementById(`view-${viewName}`).classList.remove('hidden');
+                const viewSection = document.getElementById(`view-${viewName}`);
+                if (viewSection) viewSection.classList.remove('hidden');
 
                 const titles = { dashboard: 'Dashboard de Control', calendar: 'Calendario Académico', gantt: 'Planificación Gantt (16 Semanas)', crud: 'Gestión y Progreso' };
-                document.getElementById('view-title').textContent = titles[viewName];
+                document.getElementById('view-title').textContent = titles[viewName] || 'Planner';
 
                 this.updateAllViews();
             }
@@ -557,7 +591,6 @@
                 setTimeout(() => toast.classList.remove('show'), 3000);
             }
 
-            // --- Rendering Dashboard Charts and Lists ---
             renderDashboard() {
                 const filter = document.getElementById('dash-filter-subject').value;
                 let active = this.data.tasks.filter(t => this.getTaskProgress(t) < 100);
@@ -602,7 +635,6 @@
                                     </span>
                                 </div>
                             </div>
-                            <!-- Barra Progreso Dashboard -->
                             <div class="w-full bg-slate-100 rounded-full h-3 mt-3 border border-slate-200 overflow-hidden relative">
                                 <div class="bg-gradient-to-r from-[${c}] to-blue-500 h-3 rounded-full transition-all duration-500" style="width: ${t.prog}%; background-color: ${c}"></div>
                                 <span class="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-slate-700 drop-shadow-sm">${t.prog}%</span>
@@ -619,6 +651,7 @@
 
                 const ctxP = document.getElementById('progressChart');
                 const ctxR = document.getElementById('radarChart');
+                if (!ctxP || !ctxR) return;
 
                 const lbls = [], progData = [], colData = [], pendData = [];
 
@@ -648,13 +681,13 @@
                 });
             }
 
-            // --- Rendering Calendar Logic with Alert Dots ---
             changeMonth(delta) {
                 this.currentMonth += delta;
                 if (this.currentMonth > 11) { this.currentMonth = 0; this.currentYear++; }
                 else if (this.currentMonth < 0) { this.currentMonth = 11; this.currentYear--; }
                 this.renderCalendar();
             }
+            
             resetMonth() {
                 const now = new Date();
                 this.currentMonth = now.getMonth(); this.currentYear = now.getFullYear();
@@ -665,7 +698,10 @@
                 const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
                 document.getElementById('calendar-month-year').textContent = `${months[this.currentMonth]} ${this.currentYear}`;
                 
-                const grid = document.getElementById('calendar-grid'); grid.innerHTML = '';
+                const grid = document.getElementById('calendar-grid'); 
+                if(!grid) return;
+                grid.innerHTML = '';
+                
                 const firstDay = new Date(this.currentYear, this.currentMonth, 1).getDay();
                 const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
                 const today = new Date();
@@ -676,11 +712,9 @@
                 for (let day = 1; day <= daysInMonth; day++) {
                     const dateStr = `${this.currentYear}-${String(this.currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                     const isToday = isCurrent && day === today.getDate();
-                    
                     const dayTasks = this.data.tasks.filter(t => t.dueDate === dateStr);
                     
-                    // Cálculo del punto de alerta
-                    let maxUrg = -1; // -1: none, 0: done, 1: safe, 2: attention, 3: critical, 4: overdue
+                    let maxUrg = -1; 
                     const urgMap = { 'completed': 0, 'safe': 1, 'attention': 2, 'critical': 3, 'overdue': 4 };
                     
                     let htmlTasks = dayTasks.map(t => {
@@ -697,13 +731,12 @@
                         </div>`;
                     }).join('');
 
-                    // Renderizar círculo de alerta
                     let dotHtml = '';
                     if (maxUrg === 4) dotHtml = `<div class="w-2 h-2 rounded-full bg-slate-800 mx-auto mt-0.5 shadow-sm"></div>`;
                     else if (maxUrg === 3) dotHtml = `<div class="w-2 h-2 rounded-full bg-red-500 mx-auto mt-0.5 shadow-sm shadow-red-200 animate-pulse"></div>`;
                     else if (maxUrg === 2) dotHtml = `<div class="w-2 h-2 rounded-full bg-yellow-400 mx-auto mt-0.5 shadow-sm"></div>`;
                     else if (maxUrg === 1) dotHtml = `<div class="w-2 h-2 rounded-full bg-green-500 mx-auto mt-0.5 shadow-sm"></div>`;
-                    else dotHtml = `<div class="w-2 h-2 mx-auto mt-0.5"></div>`; // spacer
+                    else dotHtml = `<div class="w-2 h-2 mx-auto mt-0.5"></div>`;
 
                     grid.innerHTML += `
                         <div class="bg-white min-h-[110px] p-2 border-b border-r border-slate-200 flex flex-col hover:bg-slate-50 transition-colors ${isToday ? 'bg-blue-50/30 ring-inset ring-2 ring-blue-400' : ''}">
@@ -717,41 +750,33 @@
                 }
             }
 
-            // --- Rendering Custom 16-Week Gantt Chart ---
             getDatePos(dateStr) {
-                // Convierte una fecha a porcentaje X en la cuadrícula de 16 semanas
                 const d = new Date(dateStr + "T00:00:00");
                 for (let i = 0; i < SEMESTER_WEEKS.length; i++) {
                     const wS = new Date(SEMESTER_WEEKS[i].start + "T00:00:00");
                     const wE = new Date(SEMESTER_WEEKS[i].end + "T23:59:59");
-                    
                     if (d >= wS && d <= wE) {
                         const off = d - wS;
                         const frac = off / (wE - wS);
                         return ((i + frac) / 16) * 100;
                     }
                 }
-
-                // Manejo estricto de la brecha vacacional para alinear a Sem 15 (Index 14)
-                const breakStart = new Date(SEMESTER_WEEKS[13].end + "T23:59:59"); // Fin W14
-                const breakEnd = new Date(SEMESTER_WEEKS[14].start + "T00:00:00"); // Inicio W15
-                if (d > breakStart && d < breakEnd) {
-                    return (14 / 16) * 100; // Exactamente el inicio de W15
-                }
-                
+                const breakStart = new Date(SEMESTER_WEEKS[13].end + "T23:59:59"); 
+                const breakEnd = new Date(SEMESTER_WEEKS[14].start + "T00:00:00"); 
+                if (d > breakStart && d < breakEnd) { return (14 / 16) * 100; }
                 const first = new Date(SEMESTER_WEEKS[0].start + "T00:00:00");
                 return d < first ? 0 : 100;
             }
 
             renderGantt() {
                 const container = document.getElementById('gantt-container');
+                if(!container) return;
                 const filter = document.getElementById('gantt-filter-subject').value;
                 
                 let tasks = this.data.tasks;
                 if (filter !== 'all') tasks = tasks.filter(t => t.subjectId === filter);
                 tasks.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
 
-                // Construir Headers de 16 semanas
                 let hHtml = SEMESTER_WEEKS.map(w => {
                     const isVac = w.id === 'S15' ? '<span class="absolute top-0 -left-6 text-[8px] text-blue-400 font-bold"><i class="fa-solid fa-snowflake"></i> Vacaciones</span>' : '';
                     return `<div class="gantt-cell gantt-header text-center flex flex-col justify-center text-xs text-slate-600 border-b-2 border-slate-300 relative">${isVac}${w.id}</div>`;
@@ -764,9 +789,8 @@
                     const c = BASE_COLORS[subj.color];
                     
                     let lPerc = this.getDatePos(t.startDate);
-                    let wPerc = Math.max(1, this.getDatePos(t.dueDate) - lPerc); // Min width
+                    let wPerc = Math.max(1, this.getDatePos(t.dueDate) - lPerc); 
                     
-                    // Controles de Slider por tarea/subtarea en el panel izquierdo
                     let ctrlHtml = '';
                     if (t.subtasks && t.subtasks.length > 0) {
                         ctrlHtml = `<div class="mt-2 space-y-3 pt-2 border-t border-slate-100">
@@ -792,15 +816,12 @@
 
                     rowsHtml += `
                         <div class="gantt-row group">
-                            <!-- Columna Info -->
                             <div class="bg-white p-3 border-b border-r border-slate-200 z-20 group-hover:bg-slate-50 transition-colors">
                                 <div class="text-[9px] font-bold uppercase tracking-wider mb-0.5" style="color:${c}">${subj.name}</div>
                                 <div class="font-bold text-sm text-slate-800 leading-tight mb-1">${t.title}</div>
                                 <div class="text-[10px] text-slate-500 mb-2"><i class="fa-solid fa-calendar-day mr-1"></i> ${t.startDate.substring(5)} al ${t.dueDate.substring(5)}</div>
                                 ${ctrlHtml}
                             </div>
-                            
-                            <!-- Timeline -->
                             <div class="relative border-b border-slate-200 bg-slate-50/20 group-hover:bg-slate-100/50 transition-colors">
                                 <div class="gantt-task-bar" style="left: ${lPerc}%; width: ${wPerc}%; background-color: ${c}40; border: 1px solid ${c};">
                                     <div class="absolute left-0 top-0 h-full bg-gradient-to-r from-black/20 to-transparent" style="width:${prog}%; background-color:${c}"></div>
@@ -821,7 +842,6 @@
                     </div>
                 `;
 
-                // Auto-scroll a la semana actual (simulado con fecha actual)
                 setTimeout(() => {
                     const scrl = document.getElementById('gantt-scroll');
                     if (scrl) {
@@ -832,7 +852,6 @@
                 }, 100);
             }
 
-            // --- CRUD Actions ---
             addSubtaskInput() {
                 const c = document.getElementById('subtasks-container');
                 const id = 'sti_' + Date.now();
@@ -883,7 +902,6 @@
                 document.getElementById('task-start').value = task.startDate;
                 document.getElementById('task-end').value = task.dueDate;
 
-                // Cargar subtareas
                 const container = document.getElementById('subtasks-container');
                 container.innerHTML = '';
                 if(task.subtasks) {
@@ -903,7 +921,6 @@
                 btn.classList.replace('bg-ucab-600', 'bg-yellow-500');
                 btn.classList.replace('hover:bg-ucab-700', 'hover:bg-yellow-600');
                 document.getElementById('task-cancel-btn').classList.remove('hidden');
-
                 document.getElementById('view-crud').scrollIntoView({behavior: 'smooth'});
             }
 
@@ -974,7 +991,10 @@
             }
         }
 
-        window.addEventListener('DOMContentLoaded', () => { window.app = new UCABApp(); });
+        // Ejecutar aplicación globalmente
+        window.addEventListener('DOMContentLoaded', () => { 
+            window.app = new UCABApp(); 
+        });
     </script>
 </body>
 </html>
